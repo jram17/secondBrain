@@ -7,13 +7,14 @@ import { FileIcon } from "../icons/FileIcon"
 import { XIcon } from "../icons/XIcon"
 import { YoutubeIcon } from "../icons/YoutubeIcon"
 import axios from 'axios'
-// need to keep images too.
+
+
+import { Tweet } from 'react-tweet'
 
 interface CardProps {
     contentId: string;
     title: string;
     link: string;
-    // type: "twitter" | "youtube" | "Documents" | "websites";
     type:string;
 }
 
@@ -32,9 +33,14 @@ function whatCard(type: string) {
     }
 }
 
+function populateTweetCard(link:string){
+    const tweetId:string= link.split('/')[5];
+    return <Tweet id={tweetId}/>
+}   
+
 const Card = ({ contentId, title, link, type }: CardProps) => {
     return (
-        <div className='bg-white rounded-md shadow-md border-slate-100 p-4 max-w-72 border min-h-48 h-fit min-w-72 ' >
+        <div className='bg-white rounded-md shadow-md border-slate-100 p-4 max-w-72 border min-h-48  min-w-72 ' >
             <div className='flex justify-between '>
                 <div className='flex justify-center items-center text-md  font-medium'>
                     <div className='text-gray-500 pr-2 '>
@@ -69,12 +75,19 @@ const Card = ({ contentId, title, link, type }: CardProps) => {
                 )}
 
                 {type === "twitter" && (
-                    <blockquote className="twitter-tweet">
-                        {/* <a href="https://twitter.com/username/status/807811447862468608"></a> */}
-                        {/* <a href="https://twitter.com/CryptexFinance/status/1857048542340116962?ref_src=twsrc%5Etfw"></a> */}
+                    
+                    // <blockquote className="twitter-tweet">
+                    //     {/* <a href="https://twitter.com/username/status/807811447862468608"></a> */}
+                    //     {/* <a href="https://twitter.com/CryptexFinance/status/1857048542340116962?ref_src=twsrc%5Etfw"></a> */}
 
-                        <a href={link.replace("x.com", "twitter.com")}></a>
-                    </blockquote>
+                    //     <a href={link.replace("x.com", "twitter.com")}></a>
+
+                    //     {/* like until the link is fetched render this  */}
+                    //     {/* <LoadingIcon/> */}
+                    // </blockquote>
+                    populateTweetCard(link)
+                    
+
                 )}
             </div>
         </div>
