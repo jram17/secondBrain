@@ -3,7 +3,8 @@ import mongoose,{model,Schema} from "mongoose";
 
 const UserSchema = new Schema({
     username:{type:String, required:true,unique:true},
-    password:{type:String, required:true}
+    password:{type:String, required:true},
+    
 });
 export const User=model("User",UserSchema);
 
@@ -13,7 +14,8 @@ const ContentSchema = new Schema({
     link:String,
     tags:[{type:mongoose.Types.ObjectId,ref:'Tag'}],
     type:String,
-    userId:{type:mongoose.Types.ObjectId,ref:'User',required:true},
+    userId:{type:mongoose.Types.ObjectId,ref:'User',required:true}, 
+    timestamp: { type: Date, default: Date.now } 
 });
 export const Content=model("Content",ContentSchema);
 

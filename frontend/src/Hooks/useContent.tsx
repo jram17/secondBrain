@@ -6,8 +6,9 @@ interface Content{
     type: string;
     link: string;
     title: string;
-    tages?:string[];
+    tags?:string[];
     userId: string;
+    timestamp:Date;
 
 }
 

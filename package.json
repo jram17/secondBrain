@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "process": "^0.11.10",
-    "react-twitter-embed": "^4.0.4"
-  }
-}

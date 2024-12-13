@@ -38,25 +38,27 @@ const Dashboard = () => {
 
         if (state === "All Notes") {
             // console.log(contents)
-            return contents.map(({ _id, type, link, title }) => <Card
+            return contents.map(({ _id, type, link, title ,timestamp}) => <Card
                 key={_id}
                 contentId={_id}
                 type={type}
                 link={link}
                 title={title}
+                timestamp={timestamp}
             />)
 
         } else {
             const selectedType =typeTranslate(state)
             return contents
                 .filter((content) => content.type.toLowerCase() === selectedType.toLowerCase())
-                .map(({ _id, type, link, title }) => (
+                .map(({ _id, type, link, title,timestamp }) => (
                     <Card
                         key={_id}
                         contentId={_id}
                         type={type}
                         link={link}
                         title={title}
+                        timestamp={timestamp}
                     />
                 ));
         }

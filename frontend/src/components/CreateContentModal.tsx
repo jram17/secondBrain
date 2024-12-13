@@ -40,37 +40,8 @@ const CreateContentModel = ({ open, onClose }: {
     }
     return (
         <div >
-            {/* {open && <div className='w-screen h-screen fixed top-0 left-0 bg-[rgba(108, 117, 125, 0.6)] flex justify-center'>
-                <div className='flex flex-col justify-center '>
-                    <div className='bg-white p-4 opacity-100  rounded-md'>
-                        <div className='flex justify-end'>
-                            <div onClick={() => onClose()} className='cursor-pointer'>
-                                <XMardkIcon />
-                            </div>
-                        </div>
-                        <div>
-                            <Input reference={titleRef} placeholder={"title"} />
-                            <Input reference={linkRef} placeholder={"link"} />
-                        </div>
-                        <div className='pt-2'>
-                         
-                            <div className="flex gap-1 justify-center pb-2">
-                                <Button text="Youtube" variant={type === ContentType.Youtube ? "primary" : "secondary"} onClick={() => {
-                                    setType(ContentType.Youtube)
-                                }}></Button>
-                                <Button text="Twitter" variant={type === ContentType.Twitter ? "primary" : "secondary"} onClick={() => {
-                                    setType(ContentType.Twitter)
-                                }}></Button>
-                            </div>
-                        </div>
-                        <div className='flex justify-center'>
-                            <Button onClick={addContent} variant='primary' text='submit' />
-                        </div>
-                    </div>
-                </div>
-            </div>} */}
             {open && (
-                <div className="w-screen h-screen bg-white/30 backdrop-blur-sm fixed top-0 left-0 flex justify-center items-center">
+                <div className="w-screen h-screen bg-white/30 backdrop-blur-md fixed top-0 left-0 flex justify-center items-center z-50">
                     <div className="flex  justify-center items-center">
                         <div
                             className=" p-4 rounded-md shadow-lg bg-white outline  outline-purple-300 "
