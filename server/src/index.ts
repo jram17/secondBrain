@@ -1,18 +1,21 @@
 import express from 'express';
 import { User, Link, Content, Tag } from './db';
 import jwt from "jsonwebtoken";
-import { userMiddleware } from './middleware';
-import { JWT_PASSWORD } from './config';
+import { verifyUserMiddleware,userMiddleware } from './middleware';
+import { JWT_ACCESS_PASSWORD, JWT_REFRESH_PASSWORD } from './config';
 import { random } from './utils'
-
+import cookieParser = require("cookie-parser")
 const app = express();
 const port = 3000;
 import cors from "cors";
 import mongoose from 'mongoose';
 import { CombinedRequest } from './types/types';
 app.use(express.json());
-app.use(cors())
-
+app.use(cors({
+    origin:["http://localhost:5173"],
+    credentials: true
+}))
+app.use(cookieParser())
 
 app.post('/api/v1/signup', async (req, res) => {
     const username = req.body.username;
@@ -41,10 +44,17 @@ app.post('/api/v1/signin', async (req, res) => {
     const password = req.body.password;
     const existinguser = await User.findOne({ username, password });
     if (existinguser) {
-        const token = jwt.sign({ id: existinguser._id }, JWT_PASSWORD);
+        const accessToken = jwt.sign({ id: existinguser._id }, JWT_ACCESS_PASSWORD,{expiresIn: '1m'});
+        const refreshToken = jwt.sign({ id: existinguser._id}, JWT_REFRESH_PASSWORD,{expiresIn:'5m'});
+        res.cookie('accessToken', accessToken, {maxAge: 1*60*1000})
+
+        res.cookie('refreshToken', refreshToken, 
+            {maxAge: 5*60*1000, httpOnly: true, secure: true, sameSite: 'strict'})
+        
         res.json({
             message: "User authenticated",
-            token: token
+            token: accessToken,
+            refresh:refreshToken,
         });
     } else {
         res.status(403).json({
@@ -53,7 +63,11 @@ app.post('/api/v1/signin', async (req, res) => {
     }
 });
 
-app.post("/api/v1/content", userMiddleware, async (req :CombinedRequest, res) => {
+app.post('/api/v1/verifyJWT',verifyUserMiddleware, async (req, res) => {
+    res.status(200).json({valid:true,message:"user authorized"})
+})
+
+app.post("/api/v1/content", verifyUserMiddleware, async (req: CombinedRequest, res) => {
     const title = req.body.title;
     const link = req.body.link;
     const type = req.body.type;
@@ -72,7 +86,8 @@ app.post("/api/v1/content", userMiddleware, async (req :CombinedRequest, res) =>
 
 })
 
-app.get('/api/v1/content', userMiddleware, async (req :CombinedRequest, res) => {
+app.get('/api/v1/content', verifyUserMiddleware, async (req :CombinedRequest, res) => {
+// app.get('/api/v1/content', async (req: CombinedRequest, res) => {
 
     const userId = req.userId;
     const content = await Content.find({
@@ -84,9 +99,9 @@ app.get('/api/v1/content', userMiddleware, async (req :CombinedRequest, res) => 
 
 });
 
-app.delete('/api/v1/:contentId', userMiddleware, async (req, res) => {
+app.delete('/api/v1/:contentId', verifyUserMiddleware, async (req, res) => {
     const contentId = req.params.contentId;
-    console.log(" deleting contentId",contentId);
+    console.log(" deleting contentId", contentId);
 
     // const deletedContent =await Content.findOneAndDelete({
     //     contentId,
@@ -95,17 +110,17 @@ app.delete('/api/v1/:contentId', userMiddleware, async (req, res) => {
     // })
 
     const deletedContent = await Content.findByIdAndDelete(contentId);
-    console.log("this is the deleted content: ",deletedContent)
+    console.log("this is the deleted content: ", deletedContent)
     res.status(200).json({
         message: "delete sucessfull"
     })
 });
 
-app.post("/api/v1/brain/share", userMiddleware, async (req :CombinedRequest, res) => {
+app.post("/api/v1/brain/share", verifyUserMiddleware, async (req: CombinedRequest, res) => {
     const share = req.body.share;
     if (share) {
         const existingLink = await Link.findOne({
-   
+
             userId: req.userId
         });
 
@@ -117,7 +132,7 @@ app.post("/api/v1/brain/share", userMiddleware, async (req :CombinedRequest, res
         }
         const hash = random(10);
         await Link.create({
-            
+
             userId: req.userId,
             hash: hash
         })
@@ -127,7 +142,7 @@ app.post("/api/v1/brain/share", userMiddleware, async (req :CombinedRequest, res
         })
     } else {
         await Link.deleteOne({
-   
+
             userId: req.userId
         });
 
@@ -174,12 +189,12 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
 
 })
 
-async function connectDB(){
-    try{
+async function connectDB() {
+    try {
         const connect = await mongoose.connect("mongodb://localhost:27017/second-brain");
-        console.log('database connected:',connect.connection.host,connect.connection.name);
-    }catch (err){
-        console.log("this is the error :",err)
+        console.log('database connected:', connect.connection.host, connect.connection.name);
+    } catch (err) {
+        console.log("this is the error :", err)
     }
 }
 

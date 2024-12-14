@@ -28,12 +28,17 @@ const CreateContentModel = ({ open, onClose }: {
 
         console.log(title, link, type);
 
+        // await axios.post("http://localhost:3000/api/v1/content", {
+        //     link, type, title
+        // }, {
+        //     headers: {
+        //         "Authorization": localStorage.getItem("token")
+        //     }
+        // })
+
+        axios.defaults.withCredentials = true; 
         await axios.post("http://localhost:3000/api/v1/content", {
             link, type, title
-        }, {
-            headers: {
-                "Authorization": localStorage.getItem("token")
-            }
         })
         onClose();
         // alert("content added successfully!!")

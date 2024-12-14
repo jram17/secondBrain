@@ -18,13 +18,15 @@ export function Signin() {
             alert("Please fill all fields");
             return;
         }
+        axios.defaults.withCredentials = true;
         const response = await axios.post("http://localhost:3000/api/v1/signin", {
             username, password
         });
-        const jwt = response.data.token;
-        localStorage.setItem("token", jwt);
+        // const jwt = response.data.token;
+        console.log("refresh token",response.data.refresh)
+        // localStorage.setItem("token", jwt);
         navigate('/dashboard')
-        // alert("SignIn Successful!");
+
 
 
     }

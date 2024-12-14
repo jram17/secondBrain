@@ -41,9 +41,9 @@ function populateTweetCard(link: string) {
 }
 
 function formatDate(timestamp: Date) {
-    const date = new Date(timestamp); // Convert timestamp to Date object
-    const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const date = new Date(timestamp);
+    const day = String(date.getDate()).padStart(2, '0'); 
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const year = date.getFullYear();
 
     return `Created on ${day}/${month}/${year}`;
@@ -54,9 +54,11 @@ const Card = ({ contentId, title, link, type, timestamp }: CardProps) => {
     const toggleHeight = () => {
         setIsExpanded(!isExpanded);
     };
+    axios.defaults.withCredentials=true;
     return (
         <div className={`bg-white rounded-md shadow-md border-slate-100 p-4 max-w-72 border ${isExpanded ? "h-fit" : "h-72"
             } min-w-72 transition-all duration-300 overflow-hidden`} onClick={() => toggleHeight()}>
+            
 
             <div className='flex justify-between '>
                 <div className='flex justify-center items-center text-md  font-medium'>
@@ -72,11 +74,12 @@ const Card = ({ contentId, title, link, type, timestamp }: CardProps) => {
                     </div>
 
                     <div className='text-gray-500 cursor-pointer' onClick={async () => {
-                        const response = await axios.delete(`http://localhost:3000/api/v1/${contentId}`, {
-                            headers: {
-                                "Authorization": localStorage.getItem("token")
-                            }
-                        });
+                        // const response = await axios.delete(`http://localhost:3000/api/v1/${contentId}`, {
+                        //     headers: {
+                        //         "Authorization": localStorage.getItem("token")
+                        //     }
+                        // });
+                        const response = await axios.delete(`http://localhost:3000/api/v1/${contentId}`);
                         if (response) { console.log(response.data.message); }
                     }}>
                         <DeleteIcon />
@@ -92,18 +95,21 @@ const Card = ({ contentId, title, link, type, timestamp }: CardProps) => {
                 )}
 
                 {type === "twitter" && (
-
-                    // <blockquote className="twitter-tweet">
-                    //     {/* <a href="https://twitter.com/username/status/807811447862468608"></a> */}
-                    //     {/* <a href="https://twitter.com/CryptexFinance/status/1857048542340116962?ref_src=twsrc%5Etfw"></a> */}
-
-                    //     <a href={link.replace("x.com", "twitter.com")}></a>
-
-                    //     {/* like until the link is fetched render this  */}
-                    //     {/* <LoadingIcon/> */}
-                    // </blockquote>
                     populateTweetCard(link)
+                )}
 
+                {type==="document" && (
+                    <div>
+
+                    </div>
+                )}
+
+                {type==="website" && (
+                    <div></div>
+                )}
+
+                {type==="image" && (
+                    <div></div>
                 )}
                 <div className='flex font-normal pt-2'>{formatDate(timestamp)}</div>
             </div>

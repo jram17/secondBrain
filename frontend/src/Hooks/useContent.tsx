@@ -1,41 +1,29 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-interface Content{
+interface Content {
     _id: string;
     type: string;
     link: string;
     title: string;
-    tags?:string[];
+    tags?: string[];
     userId: string;
-    timestamp:Date;
+    timestamp: Date;
 
 }
 
 export function useContent() {
     const [contents, setContents] = useState<Content[]>([]);
-
-    function refresh() {
-        axios.get("http://localhost:3000/api/v1/content", {
-            headers: {
-                "Authorization": localStorage.getItem("token")
-            }
-        }).then(response => {
-            setContents(response.data.content)
-        }).catch(err => { console.log("this is the error :", err) })
+    axios.defaults.withCredentials = true;
+    async function refresh() {
+        const response = await axios.get("http://localhost:3000/api/v1/content");
+        setContents(response.data.content)
     }
 
     useEffect(() => {
         refresh();
-        const interval=setInterval(() => {
-            refresh();
-        }, 10*1000);
-
-        return ()=>{
-            clearInterval(interval);
-        }
     }, [])
 
-    return {contents,refresh}
+    return { contents, refresh }
 
 }
