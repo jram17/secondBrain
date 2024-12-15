@@ -37,7 +37,6 @@ const Dashboard = () => {
 
 
         if (state === "All Notes") {
-            // console.log(contents)
             return contents.map(({ _id, type, link, title, timestamp }) => <Card
                 key={_id}
                 contentId={_id}
@@ -76,13 +75,6 @@ const Dashboard = () => {
                     <div className=' text-gray-700  font-bold text-xl  font-mono tracking-tighter flex items-center pl-2'>{state}</div>
                     <div className='flex justify-end gap-4 p-2'>
                         <Button variant='secondary' text='Share Brain' startIcon={<ShareIcon />} onClick={async () => {
-                            // const response = await axios.post("http://localhost:3000/api/v1/brain/share", {
-                            //     share: true
-                            // }, {
-                            //     headers: {
-                            //         "Authorization": localStorage.getItem("token")
-                            //     }
-                            // })
                             const response = await axios.post("http://localhost:3000/api/v1/brain/share", {
                                 share: true
                             })
@@ -95,16 +87,7 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className='flex gap-4 flex-wrap pt-2'>
-
-                    {/* {contents.map(({ _id, type, link, title }) => <Card
-                        key={_id}
-                        contentId={_id}
-                        type={type}
-                        link={link}
-                        title={title}
-                    />)} */}
-
-                    {populate()}
+                   {populate()}
                 </div>
             </div>
         </div >

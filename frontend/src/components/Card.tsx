@@ -108,9 +108,6 @@ const Card = ({ contentId, title, link, type, timestamp }: CardProps) => {
                     <div></div>
                 )}
 
-                {type==="image" && (
-                    <div></div>
-                )}
                 <div className='flex font-normal pt-2'>{formatDate(timestamp)}</div>
             </div>
         </div>

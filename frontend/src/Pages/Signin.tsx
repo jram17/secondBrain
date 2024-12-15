@@ -25,7 +25,7 @@ export function Signin() {
         // const jwt = response.data.token;
         console.log("refresh token",response.data.refresh)
         // localStorage.setItem("token", jwt);
-        navigate('/dashboard')
+        navigate('/dashboard',{replace:true});
 
 
 

@@ -87,8 +87,6 @@ app.post("/api/v1/content", verifyUserMiddleware, async (req: CombinedRequest, r
 })
 
 app.get('/api/v1/content', verifyUserMiddleware, async (req :CombinedRequest, res) => {
-// app.get('/api/v1/content', async (req: CombinedRequest, res) => {
-
     const userId = req.userId;
     const content = await Content.find({
         userId: userId
@@ -96,19 +94,11 @@ app.get('/api/v1/content', verifyUserMiddleware, async (req :CombinedRequest, re
     res.status(200).json({
         content
     })
-
 });
 
 app.delete('/api/v1/:contentId', verifyUserMiddleware, async (req, res) => {
     const contentId = req.params.contentId;
     console.log(" deleting contentId", contentId);
-
-    // const deletedContent =await Content.findOneAndDelete({
-    //     contentId,
-    //     // @ts-ignore
-    //     // userId: req.userId
-    // })
-
     const deletedContent = await Content.findByIdAndDelete(contentId);
     console.log("this is the deleted content: ", deletedContent)
     res.status(200).json({

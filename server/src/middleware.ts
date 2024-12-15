@@ -32,38 +32,58 @@ export const verifyUserMiddleware = (req: CombinedRequest, res: Response, next: 
     if (!accesstoken) {
         renewToken(req, res, next)
     } else {
-        const decoded = jwt.verify(accesstoken as string, JWT_ACCESS_PASSWORD)
-        if (decoded) {
-            if (typeof decoded === "string") {
-                res.status(403).json({
-                    message: "You are not logged in"
-                })
-                return;
+        try {
+            const decoded = jwt.verify(accesstoken as string, JWT_ACCESS_PASSWORD)
+            if (decoded) {
+                if (typeof decoded === "string") {
+                    res.status(403).json({
+                        message: "You are not logged in"
+                    })
+                    return;
+                }
+
+                req.userId = (decoded as JwtPayload).id;
+                next()
             }
 
-            req.userId = (decoded as JwtPayload).id;
-            next()
-        } else {
-            res.status(403).json({
-                message: "You are not logged in"
-            })
+        } catch (error) {
+            // if (error.name === 'TokenExpiredError') {
+            if(error instanceof jwt.TokenExpiredError) {
+                renewToken(req, res, next);
+            } else {
+                res.status(403).json({valid:false, message: "Invalid token!!" })
+            }
         }
     }
 }
 
-const renewToken = (req: CombinedRequest, res: Response,next:NextFunction) => {
+const renewToken = (req: CombinedRequest, res: Response, next: NextFunction) => {
     const refreshtoken = req.cookies.refreshToken;
-    // let exist = false;
     if (!refreshtoken) {
-        res.json({ valid: false, message: "No Refresh token" })
+        res.status(401).json({ valid: false, message: "No Refresh token present" })
     } else {
-        const decoded = jwt.verify(refreshtoken, JWT_REFRESH_PASSWORD);
-        if (decoded) {
-            const accessToken = jwt.sign((decoded as JwtPayload).id, JWT_ACCESS_PASSWORD, { expiresIn: '1m' });
-            res.cookie('accessToken', accessToken, { maxAge: 1 * 60 * 1000 })
-            // exist = true;
-            next();
+        try {
+            const decoded = jwt.verify(refreshtoken, JWT_REFRESH_PASSWORD);
+            if (decoded) {
+                const accessToken = jwt.sign(
+                    { id: (decoded as JwtPayload).id },
+                    JWT_ACCESS_PASSWORD,
+                    { expiresIn: "1m" }
+                );
+                res.cookie('accessToken', accessToken, { maxAge: 1 * 60 * 1000 });
+                req.userId = (decoded as JwtPayload).id
+                next();
+            }
         }
+        catch (error) {
+            // refresh token itself expired then
+            if (error  instanceof jwt.TokenExpiredError) {
+                res.status(401).json({ valid: false, message: "Refresh token expired or not there" });
+            } else {
+                res.status(403).json({ message: "Invalid refresh token" });
+            }
+
+        }
+
     }
-    // return exist;
 }
