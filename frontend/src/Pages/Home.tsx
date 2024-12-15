@@ -1,18 +1,19 @@
 
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
-import { useCheckAuth } from '../Hooks/useCheckAuth'
+// import { useCheckAuth } from '../Hooks/useCheckAuth'
 import { useEffect } from 'react';
 import { resetState } from '../Redux/Slices/stateSlice';
 import { useDispatch } from 'react-redux';
 import { BrainIcon } from '../icons/BrainIcon';
+import { useAuth } from '../Hooks/useAuth';
 
 const Home = () => {
     const dispatch=useDispatch();
-    const { auth, refreshAuth } = useCheckAuth();
-    useEffect(() => {
-        refreshAuth()
-    }, [refreshAuth])
+    const {auth,refresh}=useAuth();
+    useEffect(()=>{
+        refresh()
+    })
 
     console.log(auth)
     function checkCanGoToDashboard(): JSX.Element {
@@ -35,8 +36,6 @@ const Home = () => {
                         </div>
                       </div>
                 <div className='flex justify-center gap-2 p-2'>
-
-                    {/* <Link to="/dashboard"><Button variant='primary' text='DashBoard' /></Link> */}
                     {checkCanGoToDashboard()}
                     <Link to="/sign-in"><Button variant='secondary' text='Sign-In' /></Link>
 

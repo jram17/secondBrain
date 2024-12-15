@@ -60,7 +60,8 @@ export const verifyUserMiddleware = (req: CombinedRequest, res: Response, next: 
 const renewToken = (req: CombinedRequest, res: Response, next: NextFunction) => {
     const refreshtoken = req.cookies.refreshToken;
     if (!refreshtoken) {
-        res.status(401).json({ valid: false, message: "No Refresh token present" })
+        res.status(401).json({ valid: false, message: "No Refresh token present" });
+        // next()
     } else {
         try {
             const decoded = jwt.verify(refreshtoken, JWT_REFRESH_PASSWORD);

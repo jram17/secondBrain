@@ -1,7 +1,7 @@
 import express from 'express';
 import { User, Link, Content, Tag } from './db';
 import jwt from "jsonwebtoken";
-import { verifyUserMiddleware,userMiddleware } from './middleware';
+import { verifyUserMiddleware, userMiddleware } from './middleware';
 import { JWT_ACCESS_PASSWORD, JWT_REFRESH_PASSWORD } from './config';
 import { random } from './utils'
 import cookieParser = require("cookie-parser")
@@ -12,7 +12,7 @@ import mongoose from 'mongoose';
 import { CombinedRequest } from './types/types';
 app.use(express.json());
 app.use(cors({
-    origin:["http://localhost:5173"],
+    origin: ["http://localhost:5173"],
     credentials: true
 }))
 app.use(cookieParser())
@@ -44,17 +44,17 @@ app.post('/api/v1/signin', async (req, res) => {
     const password = req.body.password;
     const existinguser = await User.findOne({ username, password });
     if (existinguser) {
-        const accessToken = jwt.sign({ id: existinguser._id }, JWT_ACCESS_PASSWORD,{expiresIn: '1m'});
-        const refreshToken = jwt.sign({ id: existinguser._id}, JWT_REFRESH_PASSWORD,{expiresIn:'5m'});
-        res.cookie('accessToken', accessToken, {maxAge: 1*60*1000})
+        const accessToken = jwt.sign({ id: existinguser._id }, JWT_ACCESS_PASSWORD, { expiresIn: '1m' });
+        const refreshToken = jwt.sign({ id: existinguser._id }, JWT_REFRESH_PASSWORD, { expiresIn: '5m' });
+        res.cookie('accessToken', accessToken, { maxAge: 1 * 60 * 1000 })
 
-        res.cookie('refreshToken', refreshToken, 
-            {maxAge: 5*60*1000, httpOnly: true, secure: true, sameSite: 'strict'})
-        
+        res.cookie('refreshToken', refreshToken,
+            { maxAge: 5 * 60 * 1000, httpOnly: true, secure: true, sameSite: 'strict' })
+
         res.json({
             message: "User authenticated",
             token: accessToken,
-            refresh:refreshToken,
+            refresh: refreshToken,
         });
     } else {
         res.status(403).json({
@@ -63,8 +63,12 @@ app.post('/api/v1/signin', async (req, res) => {
     }
 });
 
-app.post('/api/v1/verifyJWT',verifyUserMiddleware, async (req, res) => {
-    res.status(200).json({valid:true,message:"user authorized"})
+app.post('/api/v1/verifyJWT', verifyUserMiddleware, async (req, res) => {
+    // res.status(200).json({ valid: true, message: "user authorized" })
+
+        res.status(200).json({ valid: true, message: "user authorized" })
+
+
 })
 
 app.post("/api/v1/content", verifyUserMiddleware, async (req: CombinedRequest, res) => {
@@ -86,7 +90,7 @@ app.post("/api/v1/content", verifyUserMiddleware, async (req: CombinedRequest, r
 
 })
 
-app.get('/api/v1/content', verifyUserMiddleware, async (req :CombinedRequest, res) => {
+app.get('/api/v1/content', verifyUserMiddleware, async (req: CombinedRequest, res) => {
     const userId = req.userId;
     const content = await Content.find({
         userId: userId

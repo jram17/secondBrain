@@ -16,7 +16,7 @@ const Dashboard = () => {
     axios.defaults.withCredentials=true;
     useEffect(() => {
         refresh()
-    }, [modalOpen, refresh])
+    }, [modalOpen])
 
     function typeTranslate(type: string) {
         switch (type) {

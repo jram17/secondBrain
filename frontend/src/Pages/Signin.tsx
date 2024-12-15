@@ -35,9 +35,13 @@ export function Signin() {
             {/* <div className="pb-2 font-semibold text-2xl ">Sign In</div> */}
             <Input reference={usernameRef} placeholder="Username" />
             <Input reference={passwordref} placeholder="Password" />
+            
             <div className="flex justify-center pt-2">
                 <Button onClick={signin} variant="primary" text='Sign In' fullwidth={true} loading={false} />
             </div>
+            <div className="text-sm pt-2 cursor-pointer" >don't have an account ? <u onClick={()=>{
+                navigate("/sign-up");
+            }} >Sign up</u></div>
 
         </div>
     </div>
