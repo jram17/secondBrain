@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 import { verifyUserMiddleware, userMiddleware } from './middleware';
 import { JWT_ACCESS_PASSWORD, JWT_REFRESH_PASSWORD } from './config';
 import { random } from './utils'
-import cookieParser = require("cookie-parser")
+import cookieParser = require("cookie-parser");
+import dotenv from "dotenv";
+dotenv.config()
+
 const app = express();
 const port = 3000;
 import cors from "cors";
@@ -183,14 +186,29 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
 
 })
 
-async function connectDB() {
-    try {
-        const connect = await mongoose.connect("mongodb://localhost:27017/second-brain");
-        console.log('database connected:', connect.connection.host, connect.connection.name);
-    } catch (err) {
-        console.log("this is the error :", err)
+// async function connectDB() {
+//     try {
+//         const connect = await mongoose.connect("mongodb://localhost:27017/second-brain");
+//         console.log('database connected:', connect.connection.host, connect.connection.name);
+//     } catch (err) {
+//         console.log("this is the error :", err)
+//     }
+// }
+
+async function connectDB(): Promise<void> {
+    try{
+        // const connectionParams={
+        //     useNewUrlParser: true,
+        //     useUnifiedTopology: true
+        // }
+        const db=process.env.db_url as string;
+        const connect = await mongoose.connect(db)
+        console.log('database connected:',  connect.connection.name);
+    }catch(error){
+        console.log("this was the error : ", error);
     }
 }
+
 
 connectDB();
 
